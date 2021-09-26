@@ -8,24 +8,24 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import edu.nitt.delta.bustracker.model.Driver;
-import edu.nitt.delta.bustracker.service.DriverService;
+import edu.nitt.delta.bustracker.model.Vehicle;
+import edu.nitt.delta.bustracker.service.VehicleService;
 
 @RestController
-@RequestMapping("/api/v1/drivers")
-public class DriverController {
-
-    @Autowired 
-    private DriverService driverService;
+@RequestMapping("/api/v1/vehicle")
+public class VehicleController {
+    
+    @Autowired
+    private VehicleService vehicleService;
 
     @GetMapping
-    public List<Driver> getAllDriver() {
-        return driverService.getAllDriver();
+    public List<Vehicle> getAllVehicle() {
+        return vehicleService.getAllVehicle();
     }
 
     @GetMapping("/{id}")
-    public Driver getDriver(@PathVariable String id) {
-        return driverService.getDriverById(id);
+    public Vehicle getVehicleById(@PathVariable String id) {
+        return vehicleService.getVehicleById(id);
     }
 
 }

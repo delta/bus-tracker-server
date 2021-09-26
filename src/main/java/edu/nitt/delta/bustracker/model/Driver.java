@@ -5,7 +5,6 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import edu.nitt.delta.bustracker.classes.Vehicle;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -21,7 +20,6 @@ public class Driver {
     private String lastName;
     private String password;
     private String gender;
-    private Vehicle vehicle;
 
     private Integer age;
 
@@ -33,15 +31,13 @@ public class Driver {
         String lastName,
         String password,
         Integer age,
-        String email,
-        Vehicle vehicle
+        String email
     ) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.password = password;
         this.age = age;
         this.email = email;
-        this.vehicle = vehicle;
     }
 
 }
