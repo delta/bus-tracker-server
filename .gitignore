@@ -19,6 +19,9 @@ src/main/resources/application.properties
 *.iml
 *.ipr
 
+### Eclipse ###
+.metadata
+
 ### NetBeans ###
 /nbproject/private/
 /nbbuild/
