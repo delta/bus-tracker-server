@@ -7,10 +7,8 @@ import org.springframework.stereotype.Service;
 
 import edu.nitt.delta.bustracker.model.Location;
 import edu.nitt.delta.bustracker.repository.LocationRepository;
-import lombok.AllArgsConstructor;
 
 @Service
-@AllArgsConstructor
 public class LocationService {
 
     @Autowired
