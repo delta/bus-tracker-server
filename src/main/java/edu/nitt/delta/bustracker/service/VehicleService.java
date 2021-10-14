@@ -23,11 +23,7 @@ public class VehicleService {
 
         Optional<Vehicle> vehicle = vehicleRepository.findById(id);
 
-        if (vehicle.isPresent()) {
-            return vehicle.get();
-        } 
-        
-        return null;
+        return vehicle.orElse(null);
     }
 
 }

@@ -23,11 +23,7 @@ public class DriverService {
 
         Optional<Driver> driver = driverRepository.findById(id);
 
-        if (driver.isPresent()) {
-            return driver.get();
-        }
-
-        return null;
+        return driver.orElse(null);
     }
 
 }

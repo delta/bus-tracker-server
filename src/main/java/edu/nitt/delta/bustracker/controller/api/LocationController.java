@@ -5,10 +5,14 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import edu.nitt.delta.bustracker.controller.response.LocationListResponse;
 import edu.nitt.delta.bustracker.controller.response.LocationResponse;
 import edu.nitt.delta.bustracker.model.Location;
 import edu.nitt.delta.bustracker.service.LocationService;
@@ -22,13 +26,37 @@ public class LocationController {
     private LocationService locationService;
 
     @GetMapping
-    public ResponseEntity<LocationResponse> getAllLocation() {
+    public ResponseEntity<LocationListResponse> getAllLocation() {
         try {
             List<Location> data = locationService.getAllLocation();
 
-            LocationResponse res = LocationResponse
+            LocationListResponse res = LocationListResponse
                 .builder()
                 .locations(data)
+                .message("OK")
+                .build();
+
+            return new ResponseEntity<>(res, HttpStatus.OK);
+
+        } catch (Exception e) {
+            return new ResponseEntity<>(LocationListResponse
+                .builder()
+                .message("Something went wrong.")
+                .build(),
+                HttpStatus.INTERNAL_SERVER_ERROR
+            );
+        }
+    } 
+
+    @PostMapping("/update")
+    public ResponseEntity<LocationResponse> updateLocation(@RequestBody Location location) {
+
+        try {
+            Location updatedLocation = locationService.updateLocation(location);
+
+            LocationResponse res = LocationResponse
+                .builder()
+                .location(updatedLocation)
                 .message("OK")
                 .build();
 
@@ -39,9 +67,39 @@ public class LocationController {
                 .builder()
                 .message("Something went wrong.")
                 .build(),
+                HttpStatus.INTERNAL_SERVER_ERROR    
+            );
+        }
+    }
+
+    @DeleteMapping("/delete")
+    public ResponseEntity<LocationResponse> deleteLocation(@RequestBody Location location) {
+
+        try {
+            
+            if (locationService.deleteLocation(location)) {
+                return new ResponseEntity<>(LocationResponse
+                    .builder()
+                    .message("Deleted")
+                    .build(),
+                    HttpStatus.NO_CONTENT
+                );
+            } else {
+                return new ResponseEntity<>(LocationResponse
+                    .builder()
+                    .message("Not found")
+                    .build(),
+                    HttpStatus.NOT_FOUND
+                );
+            }
+
+        } catch (Exception e) {
+            return new ResponseEntity<>(LocationResponse
+                .builder()
+                .message("Something went wrong.")
+                .build(),
                 HttpStatus.INTERNAL_SERVER_ERROR
             );
         }
-    } 
-
+    }
 }
