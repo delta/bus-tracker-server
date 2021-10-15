@@ -12,7 +12,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/sample")
 public class SampleController {
 
-    @Autowired private SampleService sampleService;
+    @Autowired
+    private SampleService sampleService;
 
     @GetMapping
     public ResponseEntity<String> getSampleResponse() {
