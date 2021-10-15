@@ -48,7 +48,7 @@ public class LocationController {
         }
     } 
 
-    @PostMapping("/update")
+    @PostMapping
     public ResponseEntity<LocationResponse> updateLocation(@RequestBody Location location) {
 
         try {
@@ -72,18 +72,13 @@ public class LocationController {
         }
     }
 
-    @DeleteMapping("/delete")
+    @DeleteMapping
     public ResponseEntity<LocationResponse> deleteLocation(@RequestBody Location location) {
 
         try {
             
             if (locationService.deleteLocation(location)) {
-                return new ResponseEntity<>(LocationResponse
-                    .builder()
-                    .message("Deleted")
-                    .build(),
-                    HttpStatus.NO_CONTENT
-                );
+                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
             } else {
                 return new ResponseEntity<>(LocationResponse
                     .builder()
