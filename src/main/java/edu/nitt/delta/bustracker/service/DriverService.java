@@ -13,17 +13,18 @@ import edu.nitt.delta.bustracker.repository.DriverRepository;
 public class DriverService {
 
     @Autowired 
-    DriverRepository driverRepository;
+    private DriverRepository driverRepository;
 
     public List<Driver> getAllDriver() {
         return driverRepository.findAll();
     }
 
     public Driver getDriverById(String id) {
-
         Optional<Driver> driver = driverRepository.findById(id);
-
         return driver.orElse(null);
     }
 
+    public Driver insertDriver(Driver driver) {
+        return driverRepository.insert(driver);
+    }
 }

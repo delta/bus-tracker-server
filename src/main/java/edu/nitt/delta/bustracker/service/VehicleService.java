@@ -20,10 +20,11 @@ public class VehicleService {
     }
 
     public Vehicle getVehicleById(String id) {
-
         Optional<Vehicle> vehicle = vehicleRepository.findById(id);
-
         return vehicle.orElse(null);
     }
 
+    public Vehicle insertVehicle(Vehicle vehicle) {
+        return vehicleRepository.insert(vehicle);
+    }
 }
