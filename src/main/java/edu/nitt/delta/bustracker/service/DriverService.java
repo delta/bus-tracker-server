@@ -20,17 +20,11 @@ public class DriverService {
     }
 
     public Driver getDriverById(String id) {
-
         Optional<Driver> driver = driverRepository.findById(id);
-
         return driver.orElse(null);
     }
 
     public Driver insertDriver(Driver driver) {
-
-        return driverRepository.save(driver);
-
+        return driverRepository.insert(driver);
     }
-
-
 }

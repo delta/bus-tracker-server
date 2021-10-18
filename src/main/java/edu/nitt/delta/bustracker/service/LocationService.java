@@ -52,11 +52,7 @@ public class LocationService {
     }
 
     public Boolean deleteLocation(Location location) {
-        
         Location deletedLocation = locationRepository.deleteLocationByVehicleIdAndDriverId(location.getVehicleId(), location.getDriverId());
-
         return deletedLocation != null;
-
     }
-
 }

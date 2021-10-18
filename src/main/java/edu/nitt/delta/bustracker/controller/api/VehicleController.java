@@ -93,7 +93,7 @@ public class VehicleController {
                 .message("OK")
                 .build();
 
-            return new ResponseEntity<>(res, HttpStatus.OK);
+            return new ResponseEntity<>(res, HttpStatus.CREATED);
 
         } catch (Exception e) {
             return new ResponseEntity<>(VehicleResponse
@@ -104,6 +104,4 @@ public class VehicleController {
             );
         }
     }
-
-
 }

@@ -81,7 +81,6 @@ public class DriverController {
         }
     }
 
-
     @PostMapping
     public ResponseEntity<DriverResponse> insertDriver(@RequestBody Driver driver) {
 
@@ -94,7 +93,7 @@ public class DriverController {
                 .message("OK")
                 .build();
 
-            return new ResponseEntity<>(res, HttpStatus.OK);
+            return new ResponseEntity<>(res, HttpStatus.CREATED);
 
         } catch (Exception e) {
             return new ResponseEntity<>(DriverResponse
@@ -105,6 +104,4 @@ public class DriverController {
             );
         }
     }
-
-
 }
