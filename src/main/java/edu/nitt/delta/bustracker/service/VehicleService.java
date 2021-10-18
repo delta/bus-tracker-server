@@ -26,4 +26,11 @@ public class VehicleService {
         return vehicle.orElse(null);
     }
 
+    public Vehicle insertVehicle(Vehicle vehicle) {
+
+        return vehicleRepository.save(vehicle);
+
+    }
+
+
 }
