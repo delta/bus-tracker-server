@@ -12,34 +12,35 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import edu.nitt.delta.bustracker.controller.response.DriverListResponse;
-import edu.nitt.delta.bustracker.controller.response.DriverResponse;
-import edu.nitt.delta.bustracker.model.Driver;
-import edu.nitt.delta.bustracker.service.DriverService;
+import edu.nitt.delta.bustracker.controller.response.UserListResponse;
+import edu.nitt.delta.bustracker.controller.response.UserResponse;
+import edu.nitt.delta.bustracker.model.Role;
+import edu.nitt.delta.bustracker.model.User;
+import edu.nitt.delta.bustracker.service.UserService;
 
 @RestController
 @RequestMapping("/driver")
-public class DriverController {
+public class UserController {
 
     @Autowired 
-    private DriverService driverService;
+    private UserService userService;
 
     @GetMapping
-    public ResponseEntity<DriverListResponse> getAllDriver() {
+    public ResponseEntity<UserListResponse> getAllDriver() {
 
         try {
-            List<Driver> data = driverService.getAllDriver();
+            List<User> data = userService.getAllDriver();
 
-            DriverListResponse res = DriverListResponse
+            UserListResponse res = UserListResponse
                 .builder()
-                .drivers(data)
+                .users(data)
                 .message("OK")
                 .build();
 
             return new ResponseEntity<>(res, HttpStatus.OK);
 
         } catch (Exception e) {
-            return new ResponseEntity<>(DriverListResponse
+            return new ResponseEntity<>(UserListResponse
                 .builder()
                 .message("Something went wrong.")
                 .build(), 
@@ -49,13 +50,13 @@ public class DriverController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<DriverResponse> getDriver(@PathVariable String id) {
+    public ResponseEntity<UserResponse> getDriver(@PathVariable String id) {
 
         try {
-            Driver driver = driverService.getDriverById(id);
+            User user = userService.getDriverById(id);
 
-            if (driver == null) {
-                return new ResponseEntity<>(DriverResponse
+            if (user == null) {
+                return new ResponseEntity<>(UserResponse
                     .builder()
                     .message("Invalid Id")
                     .build(), 
@@ -63,16 +64,16 @@ public class DriverController {
                 );
             }
     
-            return new ResponseEntity<>(DriverResponse
+            return new ResponseEntity<>(UserResponse
                 .builder()
-                .driver(driver)
+                .user(user)
                 .message("OK")
                 .build(), 
                 HttpStatus.OK
             );
             
         } catch (Exception e) {
-            return new ResponseEntity<>(DriverResponse
+            return new ResponseEntity<>(UserResponse
                 .builder()
                 .message("Something went wrong.")
                 .build(), 
@@ -82,21 +83,22 @@ public class DriverController {
     }
 
     @PostMapping
-    public ResponseEntity<DriverResponse> insertDriver(@RequestBody Driver driver) {
+    public ResponseEntity<UserResponse> insertDriver(@RequestBody User driver) {
 
         try {
-            Driver insertedDriver = driverService.insertDriver(driver);
+            driver.setRole(Role.DRIVER);
+            User insertedUser = userService.insertUser(driver);
 
-            DriverResponse res = DriverResponse
+            UserResponse res = UserResponse
                 .builder()
-                .driver(insertedDriver)
+                .user(insertedUser)
                 .message("OK")
                 .build();
 
             return new ResponseEntity<>(res, HttpStatus.CREATED);
 
         } catch (Exception e) {
-            return new ResponseEntity<>(DriverResponse
+            return new ResponseEntity<>(UserResponse
                 .builder()
                 .message("Something went wrong.")
                 .build(),

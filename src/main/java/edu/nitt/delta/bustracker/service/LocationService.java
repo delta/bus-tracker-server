@@ -1,6 +1,7 @@
 package edu.nitt.delta.bustracker.service;
 
 import java.util.List;
+import java.util.ArrayList;
 import java.util.Date;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +24,16 @@ public class LocationService {
 
     public List<Location> getAllLocation() {
         return locationRepository.findAll();
+    }
+
+    public List<String> getAllVehicleId() {
+        List<String> vehicleIds = new ArrayList<>();
+        
+        getAllLocation().forEach(location -> {
+            vehicleIds.add(location.getVehicleId());
+        });
+
+        return vehicleIds;
     }
 
     public Location updateLocation(Location location) {

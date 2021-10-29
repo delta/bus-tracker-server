@@ -8,13 +8,14 @@ import org.springframework.data.mongodb.core.index.Indexed;
 
 @Data
 @Builder
-public class Driver {
+public class User {
     @Id
     private String id;
 
     private String firstName;
     private String lastName;
     private String password;
+    private Role role;
 
     @Indexed(unique = true)
     private String mobileNumber;
