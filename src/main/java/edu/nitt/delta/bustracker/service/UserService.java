@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import edu.nitt.delta.bustracker.controller.response.DriverResponse;
 import edu.nitt.delta.bustracker.model.Role;
 import edu.nitt.delta.bustracker.model.User;
 import edu.nitt.delta.bustracker.repository.UserRepository;
@@ -20,27 +21,36 @@ public class UserService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    public List<User> getAllDriver() {
+    public List<DriverResponse> getAllDriver() {
         return userRepository.findByRole(Role.DRIVER);
     }
 
-    public User getDriverById(String id) {
+    public DriverResponse getDriverById(String id) {
         Optional<User> driver = userRepository.findById(id);
-        return driver.orElse(null);
+        if(driver.isPresent()) {
+            DriverResponse driverResponse = DriverResponse.builder()
+                .id(driver.get().getId())
+                .firstName(driver.get().getFirstName())
+                .lastName(driver.get().getLastName())
+                .mobileNumber(driver.get().getMobileNumber())
+                .build();
+
+            return driverResponse;
+        }
+        return null;
     }
 
-    public User insertUser(User user) {
+    public DriverResponse insertUser(User user) {
         String password = user.getPassword();
         String hashedPassword = passwordEncoder.encode(password);
         user.setPassword(hashedPassword);
         User insertedUser = userRepository.insert(user);
 
-        return User.builder()
+        return DriverResponse.builder()
             .id(insertedUser.getId())
             .firstName(insertedUser.getFirstName())
             .lastName(insertedUser.getLastName())
             .mobileNumber(insertedUser.getMobileNumber())
-            .role(insertedUser.getRole())
             .build();
     }
 }

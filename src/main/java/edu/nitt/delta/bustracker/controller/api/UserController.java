@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import edu.nitt.delta.bustracker.controller.response.DriverResponse;
 import edu.nitt.delta.bustracker.controller.response.UserListResponse;
 import edu.nitt.delta.bustracker.controller.response.UserResponse;
 import edu.nitt.delta.bustracker.model.Role;
@@ -29,11 +30,11 @@ public class UserController {
     public ResponseEntity<UserListResponse> getAllDriver() {
 
         try {
-            List<User> data = userService.getAllDriver();
+            List<DriverResponse> data = userService.getAllDriver();
 
             UserListResponse res = UserListResponse
                 .builder()
-                .users(data)
+                .drivers(data)
                 .message("OK")
                 .build();
 
@@ -53,9 +54,9 @@ public class UserController {
     public ResponseEntity<UserResponse> getDriver(@PathVariable String id) {
 
         try {
-            User user = userService.getDriverById(id);
+            DriverResponse driver = userService.getDriverById(id);
 
-            if (user == null) {
+            if (driver == null) {
                 return new ResponseEntity<>(UserResponse
                     .builder()
                     .message("Invalid Id")
@@ -66,7 +67,7 @@ public class UserController {
     
             return new ResponseEntity<>(UserResponse
                 .builder()
-                .user(user)
+                .driver(driver)
                 .message("OK")
                 .build(), 
                 HttpStatus.OK
@@ -87,11 +88,11 @@ public class UserController {
 
         try {
             driver.setRole(Role.DRIVER);
-            User insertedUser = userService.insertUser(driver);
+            DriverResponse insertedDriver = userService.insertUser(driver);
 
             UserResponse res = UserResponse
                 .builder()
-                .user(insertedUser)
+                .driver(insertedDriver)
                 .message("OK")
                 .build();
 

@@ -17,7 +17,6 @@ import edu.nitt.delta.bustracker.controller.response.LocationResponse;
 import edu.nitt.delta.bustracker.model.Location;
 import edu.nitt.delta.bustracker.service.LocationService;
 
-
 @RestController
 @RequestMapping("/location")
 public class LocationController {

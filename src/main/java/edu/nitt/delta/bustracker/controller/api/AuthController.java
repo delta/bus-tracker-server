@@ -5,7 +5,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -13,24 +12,20 @@ import org.springframework.web.bind.annotation.RestController;
 
 import edu.nitt.delta.bustracker.controller.request.AuthenticationRequest;
 import edu.nitt.delta.bustracker.controller.response.AuthenticationResponse;
-import edu.nitt.delta.bustracker.service.BusTrackerUserDetailsService;
 import edu.nitt.delta.bustracker.utils.JwtTokenUtil;
 
 @RestController
 @RequestMapping("/login")
-public class LoginController {
+public class AuthController {
 
     @Autowired
     private AuthenticationManager authenticationManager;
 
     @Autowired
-    private BusTrackerUserDetailsService busTrackerUserDetailsService;
-
-    @Autowired
     private JwtTokenUtil jwtTokenUtil;
     
     @PostMapping
-    public ResponseEntity<AuthenticationResponse> Login(@RequestBody AuthenticationRequest requestBody) {
+    public ResponseEntity<AuthenticationResponse> login(@RequestBody AuthenticationRequest requestBody) {
         String mobileNumber = requestBody.getMobileNumber();
         String password = requestBody.getPassword();
 
@@ -45,8 +40,7 @@ public class LoginController {
             );
         }
         
-        UserDetails userDetails = busTrackerUserDetailsService.loadUserByUsername(mobileNumber);
-        String jwt = jwtTokenUtil.generateToken(userDetails);
+        String jwt = jwtTokenUtil.generateToken(mobileNumber);
 
         return new ResponseEntity<>(AuthenticationResponse
             .builder()

@@ -20,7 +20,7 @@ import edu.nitt.delta.bustracker.service.BusTrackerUserDetailsService;
 import edu.nitt.delta.bustracker.utils.JwtTokenUtil;
 
 @Component
-public class BusTrackerFilter extends OncePerRequestFilter {
+public class DriverAuthFilter extends OncePerRequestFilter {
 
     @Autowired
     private BusTrackerUserDetailsService busTrackerUserDetailsService;
@@ -31,38 +31,27 @@ public class BusTrackerFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
-
         String authorizationHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
         String token = null;
         String mobileNumber = null;
-        
-        try {
 
-            if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
-                token = authorizationHeader.split(" ")[1].trim();
-                mobileNumber = jwtTokenUtil.getUsernameFromToken(token);
-            }
-
-            if (mobileNumber != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-                UserDetails userDetails = busTrackerUserDetailsService.loadUserByUsername(mobileNumber);
-    
-                if (jwtTokenUtil.validateToken(token, userDetails)) {
-                    
-                    UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
-                        userDetails, 
-                        null,
-                        userDetails.getAuthorities()
-                    );
-                    
-                    authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                    SecurityContextHolder.getContext().setAuthentication(authentication);
-                }
-            }
-            
-            filterChain.doFilter(request, response);
-        } catch (Exception e) {
-            filterChain.doFilter(request, response);
+        if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
+            token = authorizationHeader.split(" ")[1].trim();
+            mobileNumber = jwtTokenUtil.getMobileNumber(token);
         }
 
+        if (mobileNumber != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+            UserDetails userDetails = busTrackerUserDetailsService.loadUserByUsername(mobileNumber);
+                
+            UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
+                userDetails, 
+                null,
+                userDetails.getAuthorities()
+            );
+            
+            authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+        }
+        filterChain.doFilter(request, response);
     }
 }
