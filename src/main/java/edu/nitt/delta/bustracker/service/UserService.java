@@ -53,8 +53,4 @@ public class UserService {
             .mobileNumber(insertedUser.getMobileNumber())
             .build();
     }
-
-    public User getDriverByMobileNumber(String mobileNumber) {
-        return userRepository.findByMobileNumber(mobileNumber).orElse(null);
-    }
 }

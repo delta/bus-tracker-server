@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import edu.nitt.delta.bustracker.model.Location;
 import edu.nitt.delta.bustracker.repository.LocationRepository;
+import edu.nitt.delta.bustracker.repository.UserRepository;
 
 @Service
 public class LocationService {
@@ -23,7 +24,7 @@ public class LocationService {
     private MongoTemplate mongoTemplate;
 
     @Autowired
-    private UserService userService;
+    private UserRepository userRepository;
 
     public List<Location> getAllLocation() {
         return locationRepository.findAll();
@@ -40,7 +41,7 @@ public class LocationService {
     }
 
     public Location updateLocation(Location location, String mobileNumber) {
-        String driverId = userService.getDriverByMobileNumber(mobileNumber).getId();
+        String driverId = userRepository.findByMobileNumber(mobileNumber).get().getId();
 
         Query query = new Query().addCriteria(
             new Criteria().andOperator(
@@ -67,7 +68,7 @@ public class LocationService {
     }
 
     public Boolean deleteLocation(Location location, String mobileNumber) {
-        String driverId = userService.getDriverByMobileNumber(mobileNumber).getId();
+        String driverId = userRepository.findByMobileNumber(mobileNumber).get().getId();
         Location deletedLocation = locationRepository.deleteLocationByVehicleIdAndDriverId(location.getVehicleId(), driverId);
         return deletedLocation != null;
     }
