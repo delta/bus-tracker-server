@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import edu.nitt.delta.bustracker.model.Location;
 import edu.nitt.delta.bustracker.repository.LocationRepository;
+import edu.nitt.delta.bustracker.repository.UserRepository;
 
 @Service
 public class LocationService {
@@ -21,6 +22,9 @@ public class LocationService {
 
     @Autowired
     private MongoTemplate mongoTemplate;
+
+    @Autowired
+    private UserRepository userRepository;
 
     public List<Location> getAllLocation() {
         return locationRepository.findAll();
@@ -36,12 +40,13 @@ public class LocationService {
         return vehicleIds;
     }
 
-    public Location updateLocation(Location location) {
+    public Location updateLocation(Location location, String mobileNumber) {
+        String driverId = userRepository.findByMobileNumber(mobileNumber).get().getId();
 
         Query query = new Query().addCriteria(
             new Criteria().andOperator(
                 Criteria.where("vehicleId").is(location.getVehicleId()),
-                Criteria.where("driverId").is(location.getDriverId())
+                Criteria.where("driverId").is(driverId)
             )
         );
 
@@ -62,8 +67,9 @@ public class LocationService {
         return mongoTemplate.save(foundLocation);
     }
 
-    public Boolean deleteLocation(Location location) {
-        Location deletedLocation = locationRepository.deleteLocationByVehicleIdAndDriverId(location.getVehicleId(), location.getDriverId());
+    public Boolean deleteLocation(Location location, String mobileNumber) {
+        String driverId = userRepository.findByMobileNumber(mobileNumber).get().getId();
+        Location deletedLocation = locationRepository.deleteLocationByVehicleIdAndDriverId(location.getVehicleId(), driverId);
         return deletedLocation != null;
     }
 }

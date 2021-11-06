@@ -1,5 +1,6 @@
 package edu.nitt.delta.bustracker.controller.api;
 
+import java.security.Principal;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,10 +49,10 @@ public class LocationController {
     } 
 
     @PostMapping
-    public ResponseEntity<LocationResponse> updateLocation(@RequestBody Location location) {
+    public ResponseEntity<LocationResponse> updateLocation(@RequestBody Location location, Principal principal) {
 
         try {
-            Location updatedLocation = locationService.updateLocation(location);
+            Location updatedLocation = locationService.updateLocation(location, principal.getName());
 
             LocationResponse res = LocationResponse
                 .builder()
@@ -70,13 +71,12 @@ public class LocationController {
             );
         }
     }
-
+    
     @DeleteMapping
-    public ResponseEntity<LocationResponse> deleteLocation(@RequestBody Location location) {
+    public ResponseEntity<LocationResponse> deleteLocation(@RequestBody Location location, Principal principal) {
 
         try {
-            
-            if (locationService.deleteLocation(location)) {
+            if (locationService.deleteLocation(location, principal.getName())) {
                 return new ResponseEntity<>(HttpStatus.NO_CONTENT);
             } else {
                 return new ResponseEntity<>(LocationResponse
