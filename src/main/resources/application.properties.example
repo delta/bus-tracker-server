@@ -5,3 +5,9 @@ spring.data.mongodb.database=bus-tracker
 
 #jwt
 jwt.secret=jwt_secret_goes_here
+
+#dAuth
+dAuth.host=https://auth.delta.nitt.edu
+busTracker.host=
+busTracker.client.id=
+busTracker.client.secret=
