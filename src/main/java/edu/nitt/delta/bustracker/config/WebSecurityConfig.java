@@ -1,5 +1,10 @@
 package edu.nitt.delta.bustracker.config;
 
+import edu.nitt.delta.bustracker.model.Role;
+import edu.nitt.delta.bustracker.service.BusTrackerUserDetailsService;
+import edu.nitt.delta.bustracker.utils.JwtTokenUtil;
+import edu.nitt.delta.bustracker.utils.WebClientUtil;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -14,67 +19,70 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-import edu.nitt.delta.bustracker.model.Role;
-import edu.nitt.delta.bustracker.service.BusTrackerUserDetailsService;
-import edu.nitt.delta.bustracker.utils.JwtTokenUtil;
-
 @Configuration
 @EnableWebSecurity
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
-    @Autowired
-    private BusTrackerUserDetailsService busTrackerUserDetailsService;
+    private final BusTrackerUserDetailsService busTrackerUserDetailsService;
+    private final DriverAuthFilter driverAuthFilter;
 
     @Autowired
-    private PasswordEncoder bCryptPasswordEncoder;
-
-    @Autowired
-    private DriverAuthFilter busTrackerFilter;
+    public WebSecurityConfig(
+            BusTrackerUserDetailsService busTrackerUserDetailsService,
+            DriverAuthFilter driverAuthFilter
+    ) {
+        this.busTrackerUserDetailsService = busTrackerUserDetailsService;
+        this.driverAuthFilter = driverAuthFilter;
+    }
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.csrf()
-            .disable()
-            .authorizeRequests()
-            .antMatchers(HttpMethod.POST, "/login").permitAll()
-            .antMatchers(HttpMethod.GET, "/location").permitAll()
-            .antMatchers(HttpMethod.GET, "/vehicle/**").permitAll()
-            .antMatchers(HttpMethod.GET, "/driver/**").permitAll()
-            .antMatchers(HttpMethod.POST, "/driver").hasRole(Role.ADMIN.toString())
-            .antMatchers(HttpMethod.POST, "/vehicle").hasRole(Role.ADMIN.toString())
-            .anyRequest().hasAnyRole(Role.ADMIN.toString(), Role.DRIVER.toString());
-            
+                .disable()
+                .authorizeRequests()
+                .antMatchers("/auth/**")
+                .permitAll()
+                .antMatchers(
+                        HttpMethod.GET,
+                        "/location",
+                        "/vehicle/**",
+                        "driver/**")
+                .permitAll()
+                .antMatchers(HttpMethod.POST, "/driver", "/vehicle")
+                .hasRole(Role.ADMIN.toString())
+                .anyRequest().hasAnyRole(Role.ADMIN.toString(), Role.DRIVER.toString());
+
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-        
+
         http.addFilterBefore(
-            busTrackerFilter,
-            UsernamePasswordAuthenticationFilter.class
+                driverAuthFilter,
+                UsernamePasswordAuthenticationFilter.class
         );
     }
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(busTrackerUserDetailsService).passwordEncoder(bCryptPasswordEncoder);
+        auth.userDetailsService(busTrackerUserDetailsService).passwordEncoder(this.passwordEncoder());
     }
 
     @Bean
-    PasswordEncoder passwordEncoder() {
+    public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
     @Bean
-    @Override 
+    @Override
     public AuthenticationManager authenticationManagerBean() throws Exception {
         return super.authenticationManagerBean();
     }
 
     @Bean
-    public BusTrackerUserDetailsService BusTrackerUserDetailsServiceBean() {
-        return new BusTrackerUserDetailsService();
+    public JwtTokenUtil jwtTokenUtilBean() {
+        return new JwtTokenUtil();
     }
 
     @Bean
-    public JwtTokenUtil jwtTokenUtilBean() {
-        return new JwtTokenUtil();
+    public WebClientUtil webClientUtilBean() {
+        return new WebClientUtil();
     }
 }
