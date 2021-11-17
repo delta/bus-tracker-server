@@ -31,6 +31,10 @@ public class JwtTokenUtil {
                 .compact();
     }
 
+    public String getRollNumber(String token) {
+        return Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody().get("rollNumber", String.class);
+    }
+
     public String getMobileNumber(String token) {
         return Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody().getSubject();
     }

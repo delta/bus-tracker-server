@@ -46,7 +46,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                         HttpMethod.GET,
                         "/location",
                         "/vehicle/**",
-                        "driver/**")
+                        "/driver/**")
                 .permitAll()
                 .antMatchers(HttpMethod.POST, "/driver", "/vehicle")
                 .hasRole(Role.ADMIN.toString())
