@@ -9,5 +9,4 @@ public class BusTrackerServerApplication {
     public static void main(String[] args) {
         SpringApplication.run(BusTrackerServerApplication.class, args);
     }
-
 }

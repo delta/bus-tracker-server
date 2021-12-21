@@ -35,8 +35,7 @@ public class AuthController {
     public AuthController(
             AuthenticationManager authenticationManager,
             JwtTokenUtil jwtTokenUtil,
-            WebClientUtil webClientUtil
-    ) {
+            WebClientUtil webClientUtil) {
         this.authenticationManager = authenticationManager;
         this.jwtTokenUtil = jwtTokenUtil;
         this.dAuthWebClient = webClientUtil.dAuthWebClient();
@@ -52,30 +51,25 @@ public class AuthController {
     private String clientSecret;
 
     @PostMapping("/driver/login")
-    public ResponseEntity<AuthenticationResponse> login(@RequestBody AuthenticationRequest requestBody) {
+    public ResponseEntity<AuthenticationResponse> login(
+            @RequestBody AuthenticationRequest requestBody) {
         String mobileNumber = requestBody.getMobileNumber();
         String password = requestBody.getPassword();
 
         try {
-            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(mobileNumber, password));
+            authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(mobileNumber, password));
         } catch (Exception e) {
-            return new ResponseEntity<>(AuthenticationResponse
-                    .builder()
-                    .message(e.getMessage())
-                    .build(),
-                    HttpStatus.FORBIDDEN
-            );
+            return new ResponseEntity<>(
+                    AuthenticationResponse.builder().message(e.getMessage()).build(),
+                    HttpStatus.FORBIDDEN);
         }
 
         String jwt = jwtTokenUtil.generateToken(mobileNumber);
 
-        return new ResponseEntity<>(AuthenticationResponse
-                .builder()
-                .jwt(jwt)
-                .message("OK")
-                .build(),
-                HttpStatus.ACCEPTED
-        );
+        return new ResponseEntity<>(
+                AuthenticationResponse.builder().jwt(jwt).message("OK").build(),
+                HttpStatus.ACCEPTED);
     }
 
     @GetMapping("/callback")
@@ -88,32 +82,37 @@ public class AuthController {
             params.put("code", Collections.singletonList(code));
             params.put("redirect_uri", Collections.singletonList(clientHost + "/auth/callback"));
 
-            DAuthTokenResponse tokenResponse = dAuthWebClient
-                    .post()
-                    .uri("/api/oauth/token")
-                    .body(BodyInserters.fromFormData(params))
-                    .retrieve()
-                    .bodyToMono(DAuthTokenResponse.class)
-                    .block();
+            DAuthTokenResponse tokenResponse =
+                    dAuthWebClient
+                            .post()
+                            .uri("/api/oauth/token")
+                            .body(BodyInserters.fromFormData(params))
+                            .retrieve()
+                            .bodyToMono(DAuthTokenResponse.class)
+                            .block();
             if (tokenResponse == null) throw new Exception("Error fetching token");
 
-            DAuthUserDetailsResponse userDetailsResponse = dAuthWebClient
-                    .post()
-                    .uri("/api/resources/user")
-                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + tokenResponse.getAccess_token())
-                    .retrieve()
-                    .bodyToMono(DAuthUserDetailsResponse.class)
-                    .block();
+            DAuthUserDetailsResponse userDetailsResponse =
+                    dAuthWebClient
+                            .post()
+                            .uri("/api/resources/user")
+                            .header(
+                                    HttpHeaders.AUTHORIZATION,
+                                    "Bearer " + tokenResponse.getAccess_token())
+                            .retrieve()
+                            .bodyToMono(DAuthUserDetailsResponse.class)
+                            .block();
             if (userDetailsResponse == null) throw new Exception("Error fetching user details");
 
-            String jwt = jwtTokenUtil.generateStudentToken(
-                    userDetailsResponse.getEmail().substring(0, 9),
-                    userDetailsResponse.getName()
-            );
+            String jwt =
+                    jwtTokenUtil.generateStudentToken(
+                            userDetailsResponse.getEmail().substring(0, 9),
+                            userDetailsResponse.getName());
 
             return new RedirectView("bus://" + clientHost.split("://")[1] + "?jwt=" + jwt);
         } catch (Exception e) {
-            return new RedirectView("bus://" + clientHost.split("://")[1] + "?jwt=&error=" + e.getMessage());
+            return new RedirectView(
+                    "bus://" + clientHost.split("://")[1] + "?jwt=&error=" + e.getMessage());
         }
     }
 }

@@ -1,9 +1,9 @@
 package edu.nitt.delta.bustracker.utils;
 
-import org.springframework.beans.factory.annotation.Value;
-
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+
+import org.springframework.beans.factory.annotation.Value;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -32,7 +32,11 @@ public class JwtTokenUtil {
     }
 
     public String getRollNumber(String token) {
-        return Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody().get("rollNumber", String.class);
+        return Jwts.parser()
+                .setSigningKey(secret)
+                .parseClaimsJws(token)
+                .getBody()
+                .get("rollNumber", String.class);
     }
 
     public String getMobileNumber(String token) {

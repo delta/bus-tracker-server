@@ -9,8 +9,7 @@ import org.springframework.data.mongodb.core.index.Indexed;
 @Data
 @Builder
 public class User {
-    @Id
-    private String id;
+    @Id private String id;
 
     private String firstName;
     private String lastName;
