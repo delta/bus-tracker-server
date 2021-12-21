@@ -1,7 +1,8 @@
 package edu.nitt.delta.bustracker.service;
 
-import java.util.List;
-import java.util.Optional;
+import edu.nitt.delta.bustracker.model.Vehicle;
+import edu.nitt.delta.bustracker.model.VehicleType;
+import edu.nitt.delta.bustracker.repository.VehicleRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -9,21 +10,17 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
-import edu.nitt.delta.bustracker.model.Vehicle;
-import edu.nitt.delta.bustracker.model.VehicleType;
-import edu.nitt.delta.bustracker.repository.VehicleRepository;
+import java.util.List;
+import java.util.Optional;
 
 @Service
 public class VehicleService {
-    
-    @Autowired
-    private VehicleRepository vehicleRepository;
 
-    @Autowired
-    private MongoTemplate mongoTemplate;
+    @Autowired private VehicleRepository vehicleRepository;
 
-    @Autowired
-    private LocationService locationService;
+    @Autowired private MongoTemplate mongoTemplate;
+
+    @Autowired private LocationService locationService;
 
     public List<Vehicle> getAllVehicle() {
         return vehicleRepository.findAll();
@@ -46,7 +43,7 @@ public class VehicleService {
         }
         return mongoTemplate.find(query, Vehicle.class);
     }
-    
+
     public List<Vehicle> getAllInactiveVehicles(VehicleType vehicleType) {
         List<String> vehicleIds = locationService.getAllVehicleId();
         Query query = new Query().addCriteria(Criteria.where("id").nin(vehicleIds));

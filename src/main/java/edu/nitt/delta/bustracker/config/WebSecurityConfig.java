@@ -29,8 +29,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     public WebSecurityConfig(
             BusTrackerUserDetailsService busTrackerUserDetailsService,
-            DriverAuthFilter driverAuthFilter
-    ) {
+            DriverAuthFilter driverAuthFilter) {
         this.busTrackerUserDetailsService = busTrackerUserDetailsService;
         this.driverAuthFilter = driverAuthFilter;
     }
@@ -42,27 +41,22 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 .antMatchers("/auth/**")
                 .permitAll()
-                .antMatchers(
-                        HttpMethod.GET,
-                        "/location",
-                        "/vehicle/**",
-                        "/driver/**")
+                .antMatchers(HttpMethod.GET, "/location", "/vehicle/**", "/driver/**")
                 .permitAll()
                 .antMatchers(HttpMethod.POST, "/driver", "/vehicle")
                 .hasRole(Role.ADMIN.toString())
-                .anyRequest().hasAnyRole(Role.ADMIN.toString(), Role.DRIVER.toString());
+                .anyRequest()
+                .hasAnyRole(Role.ADMIN.toString(), Role.DRIVER.toString());
 
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
-        http.addFilterBefore(
-                driverAuthFilter,
-                UsernamePasswordAuthenticationFilter.class
-        );
+        http.addFilterBefore(driverAuthFilter, UsernamePasswordAuthenticationFilter.class);
     }
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(busTrackerUserDetailsService).passwordEncoder(this.passwordEncoder());
+        auth.userDetailsService(busTrackerUserDetailsService)
+                .passwordEncoder(this.passwordEncoder());
     }
 
     @Bean

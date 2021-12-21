@@ -1,11 +1,7 @@
 package edu.nitt.delta.bustracker.config;
 
-import java.io.IOException;
-
-import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import edu.nitt.delta.bustracker.service.BusTrackerUserDetailsService;
+import edu.nitt.delta.bustracker.utils.JwtTokenUtil;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -16,20 +12,23 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import edu.nitt.delta.bustracker.service.BusTrackerUserDetailsService;
-import edu.nitt.delta.bustracker.utils.JwtTokenUtil;
+import java.io.IOException;
+
+import javax.servlet.FilterChain;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 @Component
 public class DriverAuthFilter extends OncePerRequestFilter {
 
-    @Autowired
-    private BusTrackerUserDetailsService busTrackerUserDetailsService;
+    @Autowired private BusTrackerUserDetailsService busTrackerUserDetailsService;
 
-    @Autowired
-    private JwtTokenUtil jwtTokenUtil;
+    @Autowired private JwtTokenUtil jwtTokenUtil;
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+    protected void doFilterInternal(
+            HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
         String authorizationHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
         String token = null;
@@ -40,15 +39,14 @@ public class DriverAuthFilter extends OncePerRequestFilter {
             mobileNumber = jwtTokenUtil.getMobileNumber(token);
         }
 
-        if (mobileNumber != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+        if (mobileNumber != null
+                && SecurityContextHolder.getContext().getAuthentication() == null) {
             UserDetails userDetails = busTrackerUserDetailsService.loadUserByUsername(mobileNumber);
-                
-            UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
-                userDetails, 
-                null,
-                userDetails.getAuthorities()
-            );
-            
+
+            UsernamePasswordAuthenticationToken authentication =
+                    new UsernamePasswordAuthenticationToken(
+                            userDetails, null, userDetails.getAuthorities());
+
             authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
             SecurityContextHolder.getContext().setAuthentication(authentication);
         }

@@ -5,7 +5,7 @@ import lombok.Data;
 
 @Data
 @Builder
-public class DriverResponse {    
+public class DriverResponse {
     private String id;
     private String firstName;
     private String lastName;

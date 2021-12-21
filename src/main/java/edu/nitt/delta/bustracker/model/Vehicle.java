@@ -9,9 +9,8 @@ import org.springframework.data.mongodb.core.index.Indexed;
 @Data
 @Builder
 public class Vehicle {
-    @Id
-    private String id;
-    
+    @Id private String id;
+
     private VehicleType type;
 
     @Indexed(unique = true)

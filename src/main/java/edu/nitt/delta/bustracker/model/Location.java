@@ -12,9 +12,8 @@ import java.util.Date;
 @Data
 @Builder
 public class Location {
-    @Id
-    private String id;
-    
+    @Id private String id;
+
     private String vehicleId;
     private double longitude;
     private double latitude;

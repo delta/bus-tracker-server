@@ -13,7 +13,8 @@ public class WebClientUtil {
     public WebClient dAuthWebClient() {
         return WebClient.builder()
                 .baseUrl(dAuthHost)
-                .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+                .defaultHeader(
+                        HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED_VALUE)
                 .build();
     }
 }
