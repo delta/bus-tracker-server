@@ -65,17 +65,18 @@ public class LocationController {
         }
     }
 
-    @PostMapping("/{id}/status")
-    public ResponseEntity<Boolean> updateStatue(
-            @PathVariable String id, @RequestBody Location location, Principal principal) {
-        Boolean isOccupied = location.getIsOccupied();
-        String driverId = userService.getDriverId(principal.getName());
-        location = locationService.updateStatus(id, driverId, isOccupied);
-
-        if (location == null) {
-            return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
+    @PostMapping("/status")
+    public ResponseEntity<?> toggleStatus(Principal principal) {
+        try {
+            String driverId = userService.getDriverId(principal.getName());
+            Boolean isOccupied = locationService.toggleStatus(driverId);
+            return new ResponseEntity<>(isOccupied, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(
+                    "Something went wrong.",
+                    HttpStatus.INTERNAL_SERVER_ERROR
+            );
         }
-        return new ResponseEntity<>(isOccupied, HttpStatus.OK);
     }
 
     @DeleteMapping
