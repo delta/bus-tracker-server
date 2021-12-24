@@ -70,7 +70,8 @@ public class LocationController {
             String driverId = userService.getDriverId(principal.getName());
             Boolean isOccupied = locationService.toggleStatus(driverId);
             if (isOccupied == null) {
-                return new ResponseEntity<>("User is not driving an e-rickshaw", HttpStatus.BAD_REQUEST);
+                return new ResponseEntity<>(
+                        "User is not driving an e-rickshaw", HttpStatus.BAD_REQUEST);
             }
             return new ResponseEntity<>(isOccupied, HttpStatus.OK);
         } catch (Exception e) {
