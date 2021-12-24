@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class LocationService {
@@ -25,6 +26,10 @@ public class LocationService {
     @Autowired private UserRepository userRepository;
 
     @Autowired private VehicleService vehicleService;
+
+    public Optional<Location> getLocationByDriverId(String driverId) {
+        return locationRepository.findByDriverId(driverId);
+    }
 
     public List<Location> getAllLocation() {
         return locationRepository.findAll();
@@ -67,12 +72,12 @@ public class LocationService {
                     Location.builder()
                             .driverId(location.getDriverId())
                             .vehicleId(location.getVehicleId())
+                            .isOccupied(location.getIsOccupied())
                             .build();
         }
 
         foundLocation.setLatitude(location.getLatitude());
         foundLocation.setLongitude(location.getLongitude());
-        foundLocation.setIsOccupied(location.getIsOccupied());
         foundLocation.setTime(new Date());
 
         return mongoTemplate.save(foundLocation);
@@ -86,14 +91,12 @@ public class LocationService {
         return deletedLocation != null;
     }
 
-    public Location updateStatus(String id, String driverId, Boolean isOccupied) {
-        Location location = locationRepository.findById(id).orElse(null);
-        if (location != null && location.getDriverId().compareTo(driverId) == 0) {
-            location.setIsOccupied(isOccupied);
-            location = locationRepository.save(location);
-            return location;
-        }
-
-        return null;
+    public Boolean toggleStatus(String driverId) {
+        Optional<Location> location = this.getLocationByDriverId(driverId);
+        if (location.isEmpty() || location.get().getIsOccupied() == null) return null;
+        Location locationDoc = location.get();
+        locationDoc.setIsOccupied(!locationDoc.getIsOccupied());
+        locationRepository.save(locationDoc);
+        return locationDoc.getIsOccupied();
     }
 }
