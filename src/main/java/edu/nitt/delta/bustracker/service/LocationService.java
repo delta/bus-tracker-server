@@ -62,7 +62,7 @@ public class LocationService {
             if (vehicleType == VehicleType.ERICKSHAW) {
                 location.setIsOccupied(false);
             }
-    
+
             foundLocation =
                     Location.builder()
                             .driverId(location.getDriverId())

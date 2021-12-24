@@ -25,7 +25,7 @@ import java.util.List;
 public class LocationController {
 
     @Autowired private LocationService locationService;
-    
+
     @Autowired private UserService userService;
 
     @GetMapping

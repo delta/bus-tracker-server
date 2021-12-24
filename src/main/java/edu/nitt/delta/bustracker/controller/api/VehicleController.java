@@ -117,5 +117,4 @@ public class VehicleController {
                     HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-
 }
