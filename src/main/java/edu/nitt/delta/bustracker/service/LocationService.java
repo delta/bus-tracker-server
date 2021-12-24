@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class LocationService {
@@ -26,7 +27,7 @@ public class LocationService {
 
     @Autowired private VehicleService vehicleService;
 
-    public Location getLocationByDriverId(String driverId) {
+    public Optional<Location> getLocationByDriverId(String driverId) {
         return locationRepository.findByDriverId(driverId);
     }
 
@@ -91,10 +92,11 @@ public class LocationService {
     }
 
     public Boolean toggleStatus(String driverId) {
-        Location location = this.getLocationByDriverId(driverId);
-        if (location.getIsOccupied() == null) return null;
-        location.setIsOccupied(!location.getIsOccupied());
-        locationRepository.save(location);
-        return location.getIsOccupied();
+        Optional<Location> location = this.getLocationByDriverId(driverId);
+        if (location.isEmpty() || location.get().getIsOccupied() == null) return null;
+        Location locationDoc = location.get();
+        locationDoc.setIsOccupied(!locationDoc.getIsOccupied());
+        locationRepository.save(locationDoc);
+        return locationDoc.getIsOccupied();
     }
 }
