@@ -52,4 +52,12 @@ public class UserService {
                 .mobileNumber(insertedUser.getMobileNumber())
                 .build();
     }
+
+    public String getDriverId(String mobileNumber) {
+        User driver = userRepository.findByMobileNumber(mobileNumber).orElse(null);
+        if (driver != null) {
+            return driver.getId();
+        }
+        return null;
+    }
 }

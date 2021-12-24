@@ -52,4 +52,12 @@ public class VehicleService {
         }
         return mongoTemplate.find(query, Vehicle.class);
     }
+
+    public VehicleType getVehicleType(String id) {
+        Vehicle vehicle = vehicleRepository.findById(id).orElse(null);
+        if (vehicle != null) {
+            return vehicle.getType();
+        }
+        return null;
+    }
 }
