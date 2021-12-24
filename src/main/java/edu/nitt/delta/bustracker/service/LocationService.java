@@ -1,6 +1,7 @@
 package edu.nitt.delta.bustracker.service;
 
 import edu.nitt.delta.bustracker.model.Location;
+import edu.nitt.delta.bustracker.model.VehicleType;
 import edu.nitt.delta.bustracker.repository.LocationRepository;
 import edu.nitt.delta.bustracker.repository.UserRepository;
 
@@ -22,6 +23,8 @@ public class LocationService {
     @Autowired private MongoTemplate mongoTemplate;
 
     @Autowired private UserRepository userRepository;
+
+    @Autowired private VehicleService vehicleService;
 
     public List<Location> getAllLocation() {
         return locationRepository.findAll();
@@ -54,7 +57,12 @@ public class LocationService {
         Location foundLocation = mongoTemplate.findOne(query, Location.class);
 
         if (foundLocation == null) {
-
+            VehicleType vehicleType = vehicleService.getVehicleType(location.getVehicleId());
+            location.setIsOccupied(null);
+            if (vehicleType == VehicleType.ERICKSHAW) {
+                location.setIsOccupied(false);
+            }
+    
             foundLocation =
                     Location.builder()
                             .driverId(location.getDriverId())
@@ -64,6 +72,7 @@ public class LocationService {
 
         foundLocation.setLatitude(location.getLatitude());
         foundLocation.setLongitude(location.getLongitude());
+        foundLocation.setIsOccupied(location.getIsOccupied());
         foundLocation.setTime(new Date());
 
         return mongoTemplate.save(foundLocation);
@@ -75,5 +84,16 @@ public class LocationService {
                 locationRepository.deleteLocationByVehicleIdAndDriverId(
                         location.getVehicleId(), driverId);
         return deletedLocation != null;
+    }
+
+    public Location updateStatus(String id, String driverId, Boolean isOccupied) {
+        Location location = locationRepository.findById(id).orElse(null);
+        if (location != null && location.getDriverId().compareTo(driverId) == 0) {
+            location.setIsOccupied(isOccupied);
+            location = locationRepository.save(location);
+            return location;
+        }
+
+        return null;
     }
 }

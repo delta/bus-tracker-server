@@ -17,6 +17,7 @@ public class Location {
     private String vehicleId;
     private double longitude;
     private double latitude;
+    private Boolean isOccupied;
 
     @DateTimeFormat
     @Indexed(expireAfterSeconds = 5 * 60)

@@ -13,8 +13,6 @@ public class Vehicle {
 
     private VehicleType type;
 
-    private Boolean isOccupied;
-
     @Indexed(unique = true)
     private String vehicleNumber;
 }
