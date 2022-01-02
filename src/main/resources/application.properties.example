@@ -3,6 +3,9 @@ spring.data.mongodb.host=localhost
 spring.data.mongodb.port=27017
 spring.data.mongodb.database=bus-tracker
 
+#turn on mongodb-auto-index-creation
+spring.data.mongodb.auto-index-creation=true
+
 #jwt
 jwt.secret=jwt_secret_goes_here
 
